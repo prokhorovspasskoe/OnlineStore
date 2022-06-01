@@ -36,16 +36,7 @@ public class ProductController {
         if (page < 1) {
             page = 1;
         }
-        Specification<Product> spec = Specification.where(null);
-        if (titlePart != null) {
-            spec = spec.and(ProductsSpecifications.titleLike(titlePart));
-        }
-        if (minPrice != null) {
-            spec = spec.and(ProductsSpecifications.priceGreaterOrEqualsThan(BigDecimal.valueOf(minPrice)));
-        }
-        if (maxPrice != null) {
-            spec = spec.and(ProductsSpecifications.priceLessThanOrEqualsThan(BigDecimal.valueOf(maxPrice)));
-        }
+
         productService.setSpecification(titlePart, minPrice, maxPrice);
         Page<ProductDto> productDtoPage = productService.findAll(page - 1, pageSize).map(productConverter::entityToDto);
         PageConverter pageConverter = new PageConverter();
