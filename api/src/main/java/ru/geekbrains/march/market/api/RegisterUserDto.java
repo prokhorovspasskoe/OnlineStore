@@ -29,5 +29,4 @@ public class RegisterUserDto {
         this.confirmPassword = confirmPassword;
     }
 
-    // TODO возможно расширение DTO
 }
