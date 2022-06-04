@@ -6,12 +6,12 @@ angular.module('market').controller('cartController', function ($scope, $http, $
             });
     };
 
-    $scope.createOrder = function () {
-        $http.post('http://localhost:5555/core/api/v1/orders')
-            .then(function (response) {
-                $scope.loadCart();
-            });
-    }
+    $scope.createOrder = function (addressAndPhone) {
+            $http.post('http://localhost:5555/core/api/v1/orders/' + addressAndPhone)
+                .then(function (response) {
+                    $scope.loadCart();
+                });
+        }
 
     $scope.guestCreateOrder = function () {
         alert('Для оформления заказа необходимо войти в учетную запись');

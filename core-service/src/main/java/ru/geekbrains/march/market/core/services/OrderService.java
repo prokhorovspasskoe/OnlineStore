@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.geekbrains.march.market.api.CartDto;
+import ru.geekbrains.march.market.api.OrderDetails;
 import ru.geekbrains.march.market.core.entities.Order;
 import ru.geekbrains.march.market.core.entities.OrderItem;
 import ru.geekbrains.march.market.core.exceptions.ResourceNotFoundException;
@@ -12,7 +13,6 @@ import ru.geekbrains.march.market.core.repositories.OrderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class OrderService {
     private final ProductService productService;
 
     @Transactional
-    public void createNewOrder(String username) {
+    public void createNewOrder(String username, OrderDetails orderDetails) {
         CartDto cart = cartServiceIntegration.getCurrentUserCart(username);
         if (cart.getItems().isEmpty()) {
             throw new IllegalStateException("Нельзя оформить заказ для пустой корзины");
@@ -38,6 +38,8 @@ public class OrderService {
             oi.setQuantity(ci.getQuantity());
             oi.setPricePerProduct(ci.getPricePerProduct());
             oi.setProduct(productService.findById(ci.getProductId()).orElseThrow(() -> new ResourceNotFoundException("Product not found")));
+            order.setAddress(orderDetails.getAddress());
+            order.setPhone(orderDetails.getPhone());
             order.getItems().add(oi);
         });
         orderRepository.save(order);

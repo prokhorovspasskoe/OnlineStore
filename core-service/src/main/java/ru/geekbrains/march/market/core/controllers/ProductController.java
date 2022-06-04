@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.geekbrains.march.market.api.PageDto;
 import ru.geekbrains.march.market.api.ProductDto;
+import ru.geekbrains.march.market.core.converters.PageConverter;
 import ru.geekbrains.march.market.core.converters.ProductConverter;
 import ru.geekbrains.march.market.core.entities.Product;
 import ru.geekbrains.march.market.core.exceptions.ResourceNotFoundException;
@@ -24,7 +26,7 @@ public class ProductController {
     private final ProductConverter productConverter;
 
     @GetMapping
-    public Page<ProductDto> getAllProducts(
+    public PageDto getAllProducts(
             @RequestParam(name = "p", defaultValue = "1") Integer page,
             @RequestParam(name = "page_size", defaultValue = "10") Integer pageSize,
             @RequestParam(name = "title_part", required = false) String titlePart,
@@ -34,17 +36,12 @@ public class ProductController {
         if (page < 1) {
             page = 1;
         }
-        Specification<Product> spec = Specification.where(null);
-        if (titlePart != null) {
-            spec = spec.and(ProductsSpecifications.titleLike(titlePart));
-        }
-        if (minPrice != null) {
-            spec = spec.and(ProductsSpecifications.priceGreaterOrEqualsThan(BigDecimal.valueOf(minPrice)));
-        }
-        if (maxPrice != null) {
-            spec = spec.and(ProductsSpecifications.priceLessThanOrEqualsThan(BigDecimal.valueOf(maxPrice)));
-        }
-        return productService.findAll(page - 1, pageSize, spec).map(productConverter::entityToDto);
+
+        productService.setSpecification(titlePart, minPrice, maxPrice);
+        Page<ProductDto> productDtoPage = productService.findAll(page - 1, pageSize).map(productConverter::entityToDto);
+        PageConverter pageConverter = new PageConverter();
+
+        return pageConverter.convert(productDtoPage);
     }
 
     @GetMapping("/{id}")

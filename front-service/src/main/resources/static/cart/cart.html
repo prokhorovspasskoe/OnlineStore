@@ -1,4 +1,4 @@
-<div>
+<div class="container" ng-controller="cartController">
     <p></p>
     <h3>Корзина</h3>
     <p></p>
@@ -25,8 +25,18 @@
             </tbody>
         </table>
         <p></p>
+        <form class="align-middle" ng-show="isUserLoggedIn()">
+            Адрес доставки<br>
+            <textarea id="userAddress" cols="40" rows="3"
+                      aria-describedby="inputGroup-sizing-sm"></textarea><br>
+            Телефон<br>
+            <input id="userPhone" type="text" size="20" maxlength="20"
+                   aria-describedby="inputGroup-sizing-sm"><p></p>
+
+            <button id="navLoginSubmit" class="btn btn-outline-warning btn-sm"
+                    ng-click="createOrder()">Оформить заказ</button>
+        </form>
         <button class="btn btn-secondary" ng-click="guestCreateOrder()" ng-show="!isUserLoggedIn()">Оформить заказ</button>
-        <button class="btn btn-primary" ng-click="createOrder()" ng-show="isUserLoggedIn()">Оформить заказ</button>
     </div>
     <div ng-show="cart.items.length == 0">
         <p>Ваша корзина пуста</p>
